@@ -5,6 +5,9 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from builtins import str
+from builtins import object
+
 
 class BaseCodec(object):
     """
@@ -31,7 +34,7 @@ class BaseCodec(object):
 
         # Only copy options that are expected and of correct type
         # (and do typecasting on them)
-        for k, v in opts.items():
+        for k, v in list(opts.items()):
             if k in self.encoder_options:
                 typ = self.encoder_options[k]
                 try:

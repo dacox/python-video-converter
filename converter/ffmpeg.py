@@ -5,6 +5,12 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from builtins import zip
+from builtins import str
+from builtins import range
+from past.builtins import basestring
+from builtins import object
+
 import os.path
 import os
 import re
@@ -173,7 +179,7 @@ class FFMpeg(object):
     def is_url(self, url):
         #: Accept objects that have string representations.
         try:
-            url = unicode(url)
+            url = str(url)
         except NameError:
             # We're on Python 3.
             url = str(url)
@@ -298,7 +304,7 @@ class FFMpeg(object):
             else:
                 mapping = FIELD_MAPPING.get(parent, {})
 
-            for key, value in branch.items():
+            for key, value in list(branch.items()):
                 if key in ('streams', 'audio', 'video'):
                     continue
 
@@ -355,7 +361,7 @@ class FFMpeg(object):
                         data['duration_lsdvd'] = duration
                         data['duration_probe'] = probe_duration
 
-                    for value in data.values():
+                    for value in list(data.values()):
                         update_duration(value, duration)
                 elif isinstance(data, (tuple, list)):
                     for item in data:
@@ -700,7 +706,7 @@ class FFMpeg(object):
                 270: "transpose=2"
             }
             raw_rotate = video['tags'].get('rotate')
-            if raw_rotate and int(raw_rotate) in rotate_filter.keys():
+            if raw_rotate and int(raw_rotate) in list(rotate_filter.keys()):
                 src_rotate = int(raw_rotate)
                 # apply filter
                 filters = '{0}{2}{1}'.format(filters or '',
@@ -966,7 +972,7 @@ class FFMpeg(object):
         if errors:
             messages = u'; '.join(
                 u'{0} gives error: {1}'.format(outfile, error)
-                for outfile, error in errors.iteritems()
+                for outfile, error in errors.items()
             )
             raise FFMpegError(messages)
 
@@ -1029,7 +1035,7 @@ class FFMpeg(object):
         if errors:
             messages = u'; '.join(
                 u'{0} gives error: {1}'.format(outfile, error)
-                for outfile, error in errors.iteritems()
+                for outfile, error in errors.items()
             )
             raise FFMpegError(messages)
 
@@ -1095,7 +1101,7 @@ def parse_crop(data, size, fps):
         for crop_width, crop_height, x, y in matches
     )
     # Regroup values by side.
-    values = zip(*values)
+    values = list(zip(*values))
 
     # Count the number of occurences of each width/height.
     def counter(collection, limit):
@@ -1115,9 +1121,9 @@ def parse_crop(data, size, fps):
 
     # For each side find the larger gap between the number of frames of each
     # dimension and keep the dimension before the gap.
-    for pos, result in results.iteritems():
+    for pos, result in results.items():
         if result:
-            dims = result.keys()
+            dims = list(result.keys())
             dims.sort()
 
             length = width if pos in ('left', 'right') else height
