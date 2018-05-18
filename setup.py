@@ -48,5 +48,7 @@ setup(
         'doc': DocCommand
     },
 
+    install_requires=['urllib3'],
+
     packages=['converter'],
 )
