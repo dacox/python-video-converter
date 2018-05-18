@@ -1,0 +1,17 @@
+---
+version: "3"
+services:
+    python27:
+        build:
+            context: .
+            dockerfile: ./compose/development/python27/Dockerfile
+        working_dir: /opt/app
+        volumes:
+            - .:/opt/app
+    python36:
+        build:
+            context: .
+            dockerfile: ./compose/development/python36/Dockerfile
+        working_dir: /opt/app
+        volumes:
+            - .:/opt/app
