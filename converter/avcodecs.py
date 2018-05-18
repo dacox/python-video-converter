@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 
 class BaseCodec(object):
     """
@@ -226,7 +231,7 @@ class VideoCodec(BaseCodec):
             return sw, sh, None
 
         if sizing_policy not in ['Fit', 'Fill', 'Stretch', 'Keep', 'ShrinkToFit', 'ShrinkToFill']:
-            print "invalid option {0}".format(sizing_policy)
+            print("invalid option {0}".format(sizing_policy))
             return sw, sh, None
 
         """

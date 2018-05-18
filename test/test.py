@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
 # modify the path so that parent directory is in it
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import sys
 
 sys.path.append('../')

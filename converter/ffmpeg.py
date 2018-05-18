@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import os.path
 import os
 import re
@@ -375,7 +380,7 @@ class FFMpeg(object):
                 stdout_data, _ = p.communicate()
                 stdout_data = stdout_data.decode(console_encoding, 'ignore')
                 try:
-                    exec stdout_data in locals()
+                    exec(stdout_data, locals())
                     duration = float(lsdvd['track'][0]['length'])
                 except Exception:
                     pass
@@ -822,7 +827,7 @@ class FFMpeg(object):
             max_width = int(aspect * max_height)
 
         if sizing_policy not in ['Fit', 'Fill', 'Stretch', 'Keep', 'ShrinkToFit', 'ShrinkToFill']:
-            print "invalid option {0}".format(sizing_policy)
+            print("invalid option {0}".format(sizing_policy))
             return sw, sh, None
 
         """
@@ -946,7 +951,7 @@ class FFMpeg(object):
 
             try:
                 self.thumbnail_fast(fname, time, outfile, size, quality, crop, deinterlace)
-            except (DVDError, SeekError), err:
+            except (DVDError, SeekError) as err:
                 if no_slow:
                     errors[outfile] = err
                 else:
@@ -955,7 +960,7 @@ class FFMpeg(object):
                         yield timecode
                     raise StopIteration()
 
-            except Exception, err:
+            except Exception as err:
                 errors[outfile] = err
 
         if errors:
