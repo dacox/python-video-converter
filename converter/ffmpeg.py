@@ -11,6 +11,7 @@ from builtins import range
 from past.builtins import basestring
 from builtins import object
 
+import codecs
 import os.path
 import os
 import re
@@ -24,7 +25,7 @@ import time
 
 logger = logging.getLogger(__name__)
 
-console_encoding = locale.getdefaultlocale()[1] or 'UTF-8'
+# console_encoding = locale.getdefaultlocale()[1] or 'UTF-8'
 
 
 class FFMpegError(Exception):
@@ -167,7 +168,7 @@ class FFMpeg(object):
 
         p = self._spawn([self.dvd2concat_path, '-title', title, source])
         stdout_data, _ = p.communicate()
-        stdout_data = stdout_data.decode(console_encoding, 'ignore')
+        # stdout_data = stdout_data.decode(console_encoding, 'ignore')
         if not stdout_data.startswith(u'ffconcat version 1.0'):
             raise Exception("Invalid concat data from dvd2concat")
 
@@ -230,7 +231,7 @@ class FFMpeg(object):
         p = self._spawn([self.ffprobe_path, '-v', 'quiet', '-print_format',
                         'json', '-show_format', '-show_streams', fname])
         stdout_data, _ = p.communicate()
-        stdout_data = stdout_data.decode(console_encoding, 'ignore')
+        # stdout_data = stdout_data.decode(console_encoding, 'ignore')
         info = json.loads(stdout_data)
 
         info['posters'] = []
@@ -384,7 +385,7 @@ class FFMpeg(object):
                         title = int(end.split('_', 1)[0])
                 p = self._spawn(['lsdvd', '-q', '-Oy', '-t', str(title), fname])
                 stdout_data, _ = p.communicate()
-                stdout_data = stdout_data.decode(console_encoding, 'ignore')
+                # stdout_data = stdout_data.decode(console_encoding, 'ignore')
                 try:
                     exec(stdout_data, locals())
                     duration = float(lsdvd['track'][0]['length'])
@@ -497,7 +498,8 @@ class FFMpeg(object):
             if timeout:
                 signal.setitimer(signal.ITIMER_VIRTUAL, timeout)
 
-            ret = p.stderr.read(10)
+            err = codecs.getreader('utf-8')(p.stderr)
+            ret = err.read(10)
 
             if timeout:
                 signal.setitimer(signal.ITIMER_VIRTUAL, 0)
@@ -509,7 +511,7 @@ class FFMpeg(object):
             buf.append(ret)
             if '\r' in ret:
                 buf = ''.join(buf)
-                buf = buf.decode(console_encoding, 'ignore')
+                # buf = buf.decode(console_encoding, 'ignore')
                 line, buf = buf.split('\r', 1)
                 buf = [buf]
                 tmp = pat.search(line)
@@ -519,7 +521,7 @@ class FFMpeg(object):
                     yield timecode
 
         total_output = ''.join(total_output)
-        total_output = total_output.decode(console_encoding, 'ignore')
+        # total_output = total_output.decode(console_encoding, 'ignore')
         if not yielded:
             # There may have been a single time, check it
             tmp = pat.search(total_output)
@@ -746,7 +748,7 @@ class FFMpeg(object):
         _, stderr_data = p.communicate()
         if stderr_data == '':
             raise FFMpegError('Error while calling ffmpeg binary')
-        stderr_data.decode(console_encoding, "ignore")
+        # stderr_data.decode(console_encoding, "ignore")
 
     def thumbnail(self, fname, time, outfile, size=None, quality=DEFAULT_JPEG_QUALITY, crop=None, deinterlace=None):
         """
@@ -807,7 +809,7 @@ class FFMpeg(object):
         _, stderr_data = p.communicate()
         if stderr_data == '':
             raise FFMpegError('Error while calling ffmpeg binary')
-        stderr_data = stderr_data.decode(console_encoding, "ignore")
+        # stderr_data = stderr_data.decode(console_encoding, "ignore")
         if u'Output file is empty, nothing was encoded (check -ss / -t / -frames parameters if used)' in stderr_data:
             raise SeekError(stderr_data)
         if not os.path.exists(outfile):
